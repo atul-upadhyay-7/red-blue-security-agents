@@ -4,3 +4,4 @@ patches.json
 .env
 v/
 .nettacker/
+agent_config.yaml

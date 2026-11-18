@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+patches.json
+.env
+v/
+.nettacker/

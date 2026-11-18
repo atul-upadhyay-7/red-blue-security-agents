@@ -9,6 +9,9 @@ import tempfile
 MODULES = {
     "http_cors_vuln": ("open_cors", "Wildcard CORS with credentials allowed", "medium"),
     "admin_scan": ("exposed_admin", "Admin page reachable without login", "high"),
+    "clickjacking_vuln": ("clickjacking", "Page can be framed by any site (no X-Frame-Options)", "medium"),
+    "x_powered_by_vuln": ("tech_leak", "X-Powered-By header reveals the framework", "low"),
+    "http_cookie_vuln": ("weak_cookie", "Session cookie missing HttpOnly, Secure or SameSite", "medium"),
 }
 
 

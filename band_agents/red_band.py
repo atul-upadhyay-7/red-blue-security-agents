@@ -34,6 +34,9 @@ async def handle(msg, tools):
         state["requester"] = msg.sender_id
         if os.path.exists(PATCH_FILE):
             os.remove(PATCH_FILE)
+        log = os.path.join(LAB_DIR, "patch_log.jsonl")
+        if os.path.exists(log):
+            os.remove(log)
         report = await asyncio.to_thread(scan, TARGET_PORT)
         state["before"] = report
         await tools.send_message(

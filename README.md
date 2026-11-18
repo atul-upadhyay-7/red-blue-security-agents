@@ -18,6 +18,9 @@ Do not point the red agent at anything you do not own.
 |---|---|---|
 | Wildcard CORS with credentials | `http_cors_vuln` | stop sending the wildcard header |
 | Admin page open without login | `admin_scan` | return 403 on `/admin` |
+| Page can be framed (clickjacking) | `clickjacking_vuln` | send `X-Frame-Options: DENY` and a `frame-ancestors` policy |
+| `X-Powered-By` header leaks the framework | `x_powered_by_vuln` | remove the header |
+| Session cookie without HttpOnly, Secure, SameSite | `http_cookie_vuln` | set all three plus a Max-Age |
 
 `admin_scan` also reports 403 pages and the site root, so the red agent only
 counts an admin finding when an admin path answers 200.
@@ -30,9 +33,9 @@ pip install -r requirements.txt
 python run_demo.py
 ```
 
-Expected output: the red agent reports two findings, the blue agent patches
+Expected output: the red agent reports its findings, the blue agent patches
 both, the retest reports none, and the script prints `RESULT: PASS`.
-A full run takes about half a minute.
+A full run takes under a minute.
 
 ## Run it on Band
 
@@ -45,10 +48,13 @@ talking to each other in a shared room. They are plain Python with Band's
    Use the keys `red_scanner` and `blue_patcher`.
 3. Use Python 3.11 or newer, then `pip install -r requirements.txt band-sdk`.
 4. Start `python band_agents/red_band.py` and `python band_agents/blue_band.py`.
-5. Make a Band room with both agents and write `@Red Scanner scan the practice app`.
+5. Make a Band room with both agents and write `@Red Scanner scan the practice app`, then `@Blue Patcher approve`.
 
-Red scans and tags Blue with the findings. Blue explains and patches, then tags
-Red. Red rescans and reports `RESULT PASS` back to you in the room.
+Red scans and tags Blue with the findings. Blue explains each one and proposes
+a fix, but changes nothing until a human in the room replies `approve` to it
+(`reject` drops the plan). After approval Blue patches, writes a patch log
+(`patch_log.jsonl`, one line per fix with a time stamp) and tags Red. Red rescans
+and reports `RESULT PASS` back to you in the room.
 
 ## Layout
 
@@ -62,4 +68,4 @@ run_demo.py                scan, patch, rescan without Band
 
 ## Status
 
-The local loop passed 5 of 5 runs, and the full loop has run live in a Band room.
+The local loop passed every test run, and the full loop has run live in a Band room.

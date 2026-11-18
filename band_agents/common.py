@@ -42,6 +42,15 @@ def find_participant(tools, needle):
     return None
 
 
+def find_human(tools):
+    """Return the id of the first human participant, if the room says who is human."""
+    for p in tools.participants:
+        kind = str(field(p, "type", "participant_type", "sender_type", "kind") or "").lower()
+        if kind in ("user", "human"):
+            return field(p, "id", "participant_id", "user_id")
+    return None
+
+
 class RuleAdapter(SimpleAdapter):
     """Calls handler(msg, tools) for every message that mentions the agent."""
 

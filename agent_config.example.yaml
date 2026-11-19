@@ -1,0 +1,8 @@
+# Copy to agent_config.yaml and fill in the values from your Band agents.
+# agent_config.yaml is git-ignored. Never commit real keys.
+red_scanner:
+  agent_id: <id of your red-scanner agent>
+  api_key: <its api key>
+blue_patcher:
+  agent_id: <id of your blue-patcher agent>
+  api_key: <its api key>

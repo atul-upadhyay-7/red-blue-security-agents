@@ -44,9 +44,10 @@ talking to each other in a shared room. They are plain Python with Band's
 `SimpleAdapter`, so no language model or paid key is needed.
 
 1. Make a free Band account and create two agents, `red-scanner` and `blue-patcher`.
-2. Put their ids and API keys in `agent_config.yaml` (git-ignored, never commit it).
-   Use the keys `red_scanner` and `blue_patcher`.
-3. Use Python 3.11 or newer, then `pip install -r requirements.txt band-sdk`.
+2. Copy `agent_config.example.yaml` to `agent_config.yaml` and fill in the ids and
+   API keys (that file is git-ignored, never commit it).
+3. Use Python 3.11 or newer (Band's SDK needs it), then `pip install -r requirements.txt band-sdk`.
+   Keep that virtualenv active so `nettacker` is on your PATH.
 4. Start `python band_agents/red_band.py` and `python band_agents/blue_band.py`.
 5. Make a Band room with both agents and write `@Red Scanner scan the practice app`, then `@Blue Patcher approve`.
 
@@ -56,6 +57,20 @@ a fix, but changes nothing until a human in the room replies `approve` to it
 (`patch_log.jsonl`, one line per fix with a time stamp) and tags Red. Red rescans
 and reports `RESULT PASS` back to you in the room.
 
+### What a run looks like
+
+![Red scans, Blue proposes five fixes and waits](docs/band-room-1-proposal.png)
+
+![A human approves, Blue patches and logs, Red retests: RESULT PASS](docs/band-room-2-approved-pass.png)
+
+`docs/sample_patch_log.jsonl` is the log from that run.
+
+## Tests
+
+`python -m unittest discover tests` checks that every Red finding has a Blue fix,
+that proposing a plan changes nothing, that approving writes the patches and the
+log, and that the admin false-positive filter works. No Band account is needed.
+
 ## Layout
 
 ```
@@ -63,9 +78,22 @@ target/vulnerable_app.py   the weak app (patches are read from patches.json)
 agents/red_agent.py        Nettacker scan, structured findings
 agents/blue_agent.py       findings to explanation and patch
 band_agents/               the two agents wired to Band
+tests/                     unit tests
+docs/                      screenshots and a sample patch log
 run_demo.py                scan, patch, rescan without Band
 ```
 
+## Limits, stated plainly
+
+- Red and Blue are rule-based Python. There is no language model in them, so Blue
+  only fixes the five problems in its playbook and hands anything else to a human.
+- The only target is the small practice app in this repo. Red scans `127.0.0.1` and
+  nothing else.
+- The "fix" is a switch in `patches.json` that the practice app reads, not a change
+  to real source code.
+- Band is the only sponsor platform used here.
+
 ## Status
 
-The local loop passed every test run, and the full loop has run live in a Band room.
+The local loop and the full Band loop (with the approval step) have both passed
+repeated runs from a fresh clone.

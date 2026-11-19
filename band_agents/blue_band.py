@@ -42,7 +42,9 @@ async def handle(msg, tools):
                 mentions=[red] if red else None)
         elif "reject" in low:
             pending["report"] = None
-            await tools.send_message("REJECTED. No patch was applied.")
+            human = find_human(tools) or msg.sender_id
+            await tools.send_message("REJECTED. No patch was applied.",
+                                     mentions=[human] if human else None)
 
 
 async def main():
